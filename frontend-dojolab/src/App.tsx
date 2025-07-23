@@ -1,8 +1,7 @@
-// src/App.tsx
-import { ComingSoon } from "./components/ComingSoon";
+import { Home } from "./views/Home";
 
 function App() {
-  return <ComingSoon />;
+  return <Home />;
 }
 
 export default App;
