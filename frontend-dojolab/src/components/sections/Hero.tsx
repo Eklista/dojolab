@@ -8,15 +8,14 @@ export const Hero = () => {
   return (
     <>
       {/* First Viewport - Title & Description */}
-      <section className="h-screen bg-black text-white pt-48 pb-16 px-6 flex flex-col justify-between lg:justify-start">
-        <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col lg:justify-center">
+      <section className="h-screen bg-black text-white pt-24 md:pt-28 lg:pt-48 pb-16 px-3">
+        <div className="max-w-[96%] lg:max-w-[95%] xl:max-w-[90%] mx-auto w-full flex-1 flex flex-col lg:justify-center h-full">
           {/* Main Title */}
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-black uppercase leading-tight tracking-tight mb-8 lg:mb-16"
-            style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900 }}
+            className="text-5xl md:text-7xl lg:text-8xl font-black uppercase leading-tight tracking-tight mb-8 lg:mb-16 font-inter"
           >
             A CREATIVE STUDIO<br />
             BUILT LIKE A DOJO
@@ -42,7 +41,7 @@ export const Hero = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="mt-8 lg:hidden"
           >
-            <div className="w-full aspect-video">
+            <div className="w-full min-h-[300px] max-h-[60vh] bg-black rounded-lg overflow-hidden flex items-center justify-center">
               {loading ? (
                 <div className="w-full h-full bg-gray-900 rounded-lg flex items-center justify-center">
                   <div className="flex flex-col items-center space-y-4">
@@ -62,7 +61,7 @@ export const Hero = () => {
                   muted={video?.muted}
                   loop={video?.loop}
                   controls={video?.show_controls}
-                  className="rounded-lg overflow-hidden"
+                  className="w-full h-full"
                   fallbackYouTubeId="dQw4w9WgXcQ"
                 />
               )}
@@ -72,13 +71,13 @@ export const Hero = () => {
       </section>
 
       {/* Second Viewport - Video (Desktop Only) */}
-      <section className="hidden lg:block h-screen bg-black px-6">
-        <div className="max-w-7xl mx-auto h-full flex items-center justify-center">
+      <section className="hidden lg:block h-screen bg-black px-3">
+        <div className="max-w-[96%] lg:max-w-[95%] xl:max-w-[90%] mx-auto h-full flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="w-full h-full max-h-[90vh]"
+            className="w-full h-full max-h-[90vh] bg-black rounded-lg overflow-hidden flex items-center justify-center"
           >
             {loading ? (
               <div className="w-full h-full bg-gray-900 rounded-lg flex items-center justify-center">
@@ -102,7 +101,7 @@ export const Hero = () => {
                 muted={video?.muted}
                 loop={video?.loop}
                 controls={video?.show_controls}
-                className="rounded-lg overflow-hidden"
+                className="w-full h-full"
                 fallbackYouTubeId="dQw4w9WgXcQ"
               />
             )}

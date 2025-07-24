@@ -23,16 +23,16 @@ export const Navbar = () => {
       className="fixed top-0 left-0 right-0 z-50 px-3 sm:px-4 pt-4 sm:pt-6"
     >
       <motion.div
-        className={`mx-auto w-full max-w-[95%] sm:max-w-[90%] transition-all duration-700 ease-out ${
+        className={`mx-auto w-full max-w-[96%] lg:max-w-[95%] xl:max-w-[90%] transition-all duration-700 ease-out ${
           scrolled 
             ? "bg-black/40 backdrop-blur-xl border border-white/5 shadow-2xl shadow-black/50" 
             : "bg-black/20 backdrop-blur-md border border-white/10"
-        } rounded-full`}
+        } rounded-2xl lg:rounded-full`}
         style={{
-          background: scrolled 
+          backgroundImage: scrolled 
             ? 'linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(20,20,20,0.4) 100%)'
             : 'linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(20,20,20,0.2) 100%)'
-        }}
+        } as React.CSSProperties}
       >
         <div className="flex items-center justify-between px-6 sm:px-8 py-3 sm:py-4">
           {/* Logo Section - Solo logo sin texto */}
