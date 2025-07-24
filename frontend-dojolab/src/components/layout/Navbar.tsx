@@ -34,8 +34,9 @@ export const Navbar = () => {
             : 'linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(20,20,20,0.2) 100%)'
         } as React.CSSProperties}
       >
-        <div className="flex items-center justify-between px-6 sm:px-8 py-3 sm:py-4">
-          {/* Logo Section - Solo logo sin texto */}
+        <div className="flex items-center justify-between px-6 sm:px-8 py-2 sm:py-3">
+          
+          {/* Logo Section */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -43,17 +44,27 @@ export const Navbar = () => {
             className="flex items-center space-x-3"
           >
             <motion.div
-              className="relative"
+              className="relative group"
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400, damping: 20 }}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-violet-600/20 rounded-xl blur-sm"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-lime-500/20 to-lime-600/20 rounded-xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <img
                 src="/logo.png"
                 alt="The Dojo Lab"
-                className="relative w-9 h-9 object-contain rounded-xl border border-white/10"
+                className="relative w-8 h-8 object-contain rounded-lg border border-white/10"
               />
             </motion.div>
+            
+            {/* Brand Text - visible on larger screens */}
+            <motion.span 
+              className="hidden md:block text-brutal-subtitle text-white text-sm tracking-[0.1em]"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+            >
+              THE DOJO LAB
+            </motion.span>
           </motion.div>
 
           {/* Desktop Navigation */}
@@ -67,7 +78,7 @@ export const Navbar = () => {
               <motion.a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="relative px-4 py-2 text-gray-300 hover:text-white transition-all duration-300 font-medium text-sm font-['Inter'] group rounded-full"
+                className="relative px-6 py-3 text-gray-300 hover:text-white transition-all duration-300 text-brutal-subtitle text-xs group rounded-full"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
@@ -83,40 +94,27 @@ export const Navbar = () => {
                 <span className="relative z-10">{item}</span>
                 
                 <motion.span 
-                  className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-purple-400 to-violet-400 group-hover:w-3/4 transition-all duration-300 rounded-full"
+                  className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-lime-400 group-hover:w-3/4 transition-all duration-300 rounded-full"
                 />
               </motion.a>
             ))}
           </motion.div>
 
-          {/* Right Section - Botones que se quedan */}
+          {/* Right Section */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="flex items-center space-x-2 sm:space-x-3"
+            className="flex items-center space-x-3"
           >
-            {/* Profile Icon */}
-            <motion.button
-              className="hidden sm:flex items-center justify-center w-10 h-10 text-gray-400 hover:text-white hover:bg-white/10 backdrop-blur-sm transition-all duration-300 rounded-full border border-white/10 group"
-              whileHover={{ 
-                scale: 1.05,
-                backgroundColor: "rgba(255,255,255,0.1)"
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </motion.button>
-
+            
             {/* CTA Button */}
             <motion.a
               href="mailto:hola@thedojolab.com"
-              className="hidden sm:inline-flex items-center px-4 sm:px-6 py-2.5 bg-gradient-to-r from-white/90 to-gray-100/90 backdrop-blur-sm text-black font-semibold text-sm rounded-full hover:from-white hover:to-gray-50 transition-all duration-300 font-['Inter'] shadow-lg border border-white/20 group"
+              className="hidden sm:inline-flex items-center px-5 py-2 bg-lime-400 text-black text-brutal-subtitle text-xs hover:bg-white transition-all duration-300 shadow-lg group"
               whileHover={{ 
                 scale: 1.05,
-                boxShadow: "0 20px 40px rgba(255, 255, 255, 0.1)"
+                boxShadow: "4px 4px 0px rgba(132, 204, 22, 0.3)"
               }}
               whileTap={{ scale: 0.95 }}
             >
@@ -134,7 +132,7 @@ export const Navbar = () => {
             {/* Mobile Menu Button */}
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2.5 text-gray-400 hover:text-white transition-all duration-300 rounded-full hover:bg-white/10 backdrop-blur-sm border border-white/10"
+              className="lg:hidden p-2 text-gray-400 hover:text-white transition-all duration-300 rounded-full hover:bg-white/10 backdrop-blur-sm border border-white/10"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -171,7 +169,7 @@ export const Navbar = () => {
               <motion.a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-300 font-medium text-sm font-['Inter'] rounded-full"
+                className="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-300 text-brutal-subtitle text-sm rounded-full"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ 
                   opacity: isMenuOpen ? 1 : 0,
@@ -186,7 +184,7 @@ export const Navbar = () => {
             
             <motion.a
               href="mailto:hola@thedojolab.com"
-              className="block px-4 py-3 mt-4 bg-gradient-to-r from-white/90 to-gray-100/90 text-black font-semibold text-sm rounded-full text-center border border-white/20"
+              className="block px-4 py-3 mt-4 bg-lime-400 text-black text-brutal-subtitle text-sm text-center border border-white/20"
               initial={{ opacity: 0, y: 20 }}
               animate={{ 
                 opacity: isMenuOpen ? 1 : 0,

@@ -1,4 +1,3 @@
-// components/WorkCard.tsx
 import { useState } from "react";
 import { motion } from "framer-motion";
 
@@ -43,7 +42,7 @@ export const WorkCard = ({
         />
         
         {/* Category overlay */}
-        <div className="absolute top-4 left-4 bg-black/80 text-white px-3 py-1 text-xs font-medium uppercase tracking-wider">
+        <div className="absolute top-4 left-4 bg-black/80 text-white px-3 py-1 text-brutal-caption text-xs">
           {category}
         </div>
       </div>
@@ -52,7 +51,7 @@ export const WorkCard = ({
       <div className="space-y-3">
         {/* Title */}
         <motion.h3 
-          className="text-xl lg:text-2xl font-black uppercase text-white leading-tight font-inter"
+          className="text-brutal-title text-xl lg:text-2xl text-white leading-tight"
           animate={{ 
             x: isHovered ? 4 : 0
           }}
@@ -63,7 +62,7 @@ export const WorkCard = ({
 
         {/* Description */}
         <motion.p 
-          className="text-sm lg:text-base text-gray-400 leading-relaxed"
+          className="text-brutal-body text-sm lg:text-base text-gray-400 leading-relaxed"
           animate={{ 
             x: isHovered ? 4 : 0
           }}
