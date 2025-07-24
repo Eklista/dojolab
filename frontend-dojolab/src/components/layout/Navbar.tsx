@@ -13,7 +13,7 @@ export const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navItems = ["Servicios", "Portfolio", "Nosotros"];
+  const navItems = ["Servicios", "Trabajos", "Cotización"];
 
   return (
     <motion.nav
@@ -35,7 +35,7 @@ export const Navbar = () => {
         }}
       >
         <div className="flex items-center justify-between px-6 sm:px-8 py-3 sm:py-4">
-          {/* Logo Section */}
+          {/* Logo Section - Solo logo sin texto */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -54,14 +54,6 @@ export const Navbar = () => {
                 className="relative w-9 h-9 object-contain rounded-xl border border-white/10"
               />
             </motion.div>
-            
-            <motion.span 
-              className="text-white font-bold text-lg sm:text-xl tracking-tight font-['Sora'] bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent"
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
-            >
-              The Dojo Lab
-            </motion.span>
           </motion.div>
 
           {/* Desktop Navigation */}
@@ -97,7 +89,7 @@ export const Navbar = () => {
             ))}
           </motion.div>
 
-          {/* Right Section */}
+          {/* Right Section - Botones que se quedan */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}

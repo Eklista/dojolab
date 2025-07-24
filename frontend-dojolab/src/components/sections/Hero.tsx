@@ -1,60 +1,114 @@
 import { motion } from "framer-motion";
-import { Card } from "../ui/Card";
+import { useHeroVideo } from "../../hooks/useHeroVideo";
+import { VideoPlayer } from "../../components/VideoPlayer";
 
 export const Hero = () => {
+  const { video, videoUrl, posterUrl, loading, error } = useHeroVideo();
+
   return (
-    <section className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black pt-24 md:pt-28 pb-24 md:pb-28 px-3 sm:px-4">
-      <div className="mx-auto w-full max-w-[95%] sm:max-w-[90%] h-[calc(100vh-14rem)]">
-        {/* Cards Grid - Full Viewport Height */}
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="grid grid-cols-12 gap-4 sm:gap-6 h-full"
-        >
-          {/* Featured Card - Full Width Top Row */}
-          <Card
-            size="full"
-            title="3D shapes and textured shapes"
-            subtitle="3D shapes / textured shapes"
-            backgroundImage="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=2064&q=80"
-            gradient="from-black/60 via-gray-900/40 to-black/70"
-            badge="MORE"
-            className="row-span-2"
-          />
+    <>
+      {/* First Viewport - Title & Description */}
+      <section className="h-screen bg-black text-white pt-48 pb-16 px-6 flex flex-col justify-between lg:justify-start">
+        <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col lg:justify-center">
+          {/* Main Title */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-5xl md:text-7xl lg:text-8xl font-black uppercase leading-tight tracking-tight mb-8 lg:mb-16"
+            style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900 }}
+          >
+            A CREATIVE STUDIO<br />
+            BUILT LIKE A DOJO
+          </motion.h1>
 
-          {/* Bottom Row - Three Cards */}
-          <Card
-            size="medium"
-            title="Textures for your projects"
-            subtitle="Textures / 3D textures"
-            backgroundImage="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-            gradient="from-indigo-900/60 via-purple-900/40 to-black/70"
-            badge="MORE"
-            className="row-span-1"
-          />
+          {/* Description */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="max-w-xl lg:ml-auto"
+          >
+            <p className="text-lg md:text-xl leading-relaxed">
+              Nos especializamos en branding, UX/UI y desarrollo web 
+              para marcas que quieren destacar en el mundo digital.
+            </p>
+          </motion.div>
 
-          <Card
-            size="medium"
-            title="B-Mockups: MacBook 16 Pro"
-            subtitle="Main / Devices Mockups"
-            backgroundImage="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-            gradient="from-orange-900/60 via-red-900/40 to-black/70"
-            badge="MORE"
-            className="row-span-1"
-          />
+          {/* Video for Mobile - shows only on mobile */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="mt-8 lg:hidden"
+          >
+            <div className="w-full aspect-video">
+              {loading ? (
+                <div className="w-full h-full bg-gray-900 rounded-lg flex items-center justify-center">
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                    <p className="text-white/60 text-sm">Loading video...</p>
+                  </div>
+                </div>
+              ) : error ? (
+                <div className="w-full h-full bg-red-900/20 rounded-lg flex items-center justify-center">
+                  <p className="text-red-300 text-sm">Error loading video</p>
+                </div>
+              ) : (
+                <VideoPlayer
+                  videoUrl={videoUrl}
+                  posterUrl={posterUrl}
+                  autoplay={video?.autoplay}
+                  muted={video?.muted}
+                  loop={video?.loop}
+                  controls={video?.show_controls}
+                  className="rounded-lg overflow-hidden"
+                  fallbackYouTubeId="dQw4w9WgXcQ"
+                />
+              )}
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
-          <Card
-            size="medium"
-            title="A-Mockups: iPhone 14 Pro"
-            subtitle="Main / Devices Mockups"
-            backgroundImage="https://images.unsplash.com/photo-1592179900824-9540fd1c96d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-            gradient="from-blue-900/60 via-indigo-900/40 to-black/70"
-            badge="MORE"
-            className="row-span-1"
-          />
-        </motion.div>
-      </div>
-    </section>
+      {/* Second Viewport - Video (Desktop Only) */}
+      <section className="hidden lg:block h-screen bg-black px-6">
+        <div className="max-w-7xl mx-auto h-full flex items-center justify-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="w-full h-full max-h-[90vh]"
+          >
+            {loading ? (
+              <div className="w-full h-full bg-gray-900 rounded-lg flex items-center justify-center">
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                  <p className="text-white/60">Loading video...</p>
+                </div>
+              </div>
+            ) : error ? (
+              <div className="w-full h-full bg-red-900/20 rounded-lg flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-red-300 text-lg mb-2">Error loading video from Directus</p>
+                  <p className="text-red-300/60 text-sm">Using fallback video</p>
+                </div>
+              </div>
+            ) : (
+              <VideoPlayer
+                videoUrl={videoUrl}
+                posterUrl={posterUrl}
+                autoplay={video?.autoplay}
+                muted={video?.muted}
+                loop={video?.loop}
+                controls={video?.show_controls}
+                className="rounded-lg overflow-hidden"
+                fallbackYouTubeId="dQw4w9WgXcQ"
+              />
+            )}
+          </motion.div>
+        </div>
+      </section>
+    </>
   );
 };
