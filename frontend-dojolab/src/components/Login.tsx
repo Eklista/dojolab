@@ -36,7 +36,7 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-4">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -49,14 +49,14 @@ export const Login = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-2xl mb-4"
+            className="inline-flex items-center justify-center w-16 h-16 bg-[#c9f31d] rounded-2xl mb-6 shadow-card"
           >
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </motion.div>
-          <h1 className="text-2xl font-bold text-white mb-2">{config.appName}</h1>
-          <p className="text-gray-400 text-sm">Acceso administrativo</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2 text-heading">{config.appName}</h1>
+          <p className="text-gray-600 text-sm text-body">Acceso administrativo</p>
         </div>
 
         {/* Formulario */}
@@ -72,20 +72,20 @@ export const Login = () => {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-red-500/10 border border-red-500/20 rounded-lg p-4"
+              className="bg-red-50 border border-red-200 rounded-2xl p-4"
             >
               <div className="flex items-center space-x-2">
-                <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
-                <span className="text-red-400 text-sm">{error}</span>
+                <span className="text-red-700 text-sm text-body">{error}</span>
               </div>
             </motion.div>
           )}
 
           {/* Email field */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2 text-caption">
               Email
             </label>
             <input
@@ -95,7 +95,7 @@ export const Login = () => {
               value={credentials.email}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-white/30 transition-colors"
+              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-[#c9f31d] transition-all duration-200 input-focus text-body"
               placeholder="admin@thedojolab.com"
               disabled={isSubmitting}
             />
@@ -103,7 +103,7 @@ export const Login = () => {
 
           {/* Password field */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2 text-caption">
               Contraseña
             </label>
             <input
@@ -113,7 +113,7 @@ export const Login = () => {
               value={credentials.password}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-white/30 transition-colors"
+              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:border-[#c9f31d] transition-all duration-200 input-focus text-body"
               placeholder="••••••••"
               disabled={isSubmitting}
             />
@@ -123,13 +123,13 @@ export const Login = () => {
           <motion.button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-white text-black py-3 px-4 rounded-lg font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="w-full bg-gray-900 text-white py-3 px-6 rounded-full font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-[#c9f31d] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-card hover:shadow-card-hover hover-lift text-caption"
             whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
             whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center space-x-2">
-                <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                 <span>Iniciando sesión...</span>
               </div>
             ) : (
@@ -145,7 +145,7 @@ export const Login = () => {
           transition={{ delay: 0.5, duration: 0.5 }}
           className="mt-8 text-center"
         >
-          <p className="text-gray-500 text-xs">
+          <p className="text-gray-400 text-xs text-body">
             © 2025 The Dojo Lab. Versión {config.appVersion}
           </p>
         </motion.div>

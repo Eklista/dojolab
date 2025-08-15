@@ -1,13 +1,11 @@
-import { motion } from "framer-motion";
 import { config } from "../../utils/config";
 
 interface SidebarProps {
   activeView: string;
   onViewChange: (view: string) => void;
-  isCollapsed?: boolean;
 }
 
-export const Sidebar = ({ activeView, onViewChange, isCollapsed = false }: SidebarProps) => {
+export const Sidebar = ({ activeView, onViewChange }: SidebarProps) => {
   const menuItems = [
     {
       id: 'home',
@@ -50,24 +48,17 @@ export const Sidebar = ({ activeView, onViewChange, isCollapsed = false }: Sideb
   ];
 
   return (
-    <motion.aside
-      className="h-screen bg-gray-900 border-r border-white/10 flex flex-col"
-      initial={{ width: isCollapsed ? 64 : 256 }}
-      animate={{ width: isCollapsed ? 64 : 256 }}
-      transition={{ duration: 0.3 }}
-    >
+    <aside className="h-screen bg-white border-r border-gray-200 flex flex-col shadow-card w-64">
       {/* Logo */}
-      <div className="p-6 border-b border-white/10">
+      <div className="p-6 border-b border-gray-100">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-            <span className="text-black font-bold text-sm">D</span>
+          <div className="w-10 h-10 bg-[#c9f31d] rounded-2xl flex items-center justify-center shadow-card">
+            <span className="text-gray-900 font-bold text-sm text-heading">D</span>
           </div>
-          {!isCollapsed && (
-            <div>
-              <h1 className="text-white font-bold text-sm">The Dojo Lab</h1>
-              <p className="text-gray-400 text-xs">Dashboard</p>
-            </div>
-          )}
+          <div>
+            <h1 className="text-gray-900 font-bold text-sm text-heading">The Dojo Lab</h1>
+            <p className="text-gray-600 text-xs text-body">Dashboard</p>
+          </div>
         </div>
       </div>
 
@@ -78,14 +69,14 @@ export const Sidebar = ({ activeView, onViewChange, isCollapsed = false }: Sideb
             <li key={item.id}>
               <button
                 onClick={() => onViewChange(item.id)}
-                className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-200 hover-lift text-caption ${
                   activeView === item.id
-                    ? 'bg-white text-black'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-gray-900 text-white shadow-card'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                 }`}
               >
                 {item.icon}
-                {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+                <span className="font-medium">{item.label}</span>
               </button>
             </li>
           ))}
@@ -93,11 +84,9 @@ export const Sidebar = ({ activeView, onViewChange, isCollapsed = false }: Sideb
       </nav>
 
       {/* Version */}
-      {!isCollapsed && (
-        <div className="p-4 border-t border-white/10">
-          <p className="text-gray-500 text-xs">v{config.appVersion}</p>
-        </div>
-      )}
-    </motion.aside>
+      <div className="p-4 border-t border-gray-100">
+        <p className="text-gray-400 text-xs text-center text-body">v{config.appVersion}</p>
+      </div>
+    </aside>
   );
 };

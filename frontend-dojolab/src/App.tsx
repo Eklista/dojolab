@@ -9,7 +9,6 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { createApiClient } from "./utils/api-client";
 import { config } from "./utils/config";
 
-// Inicializar el API client
 createApiClient(config.directusUrl);
 
 const DashboardContent = () => {
@@ -30,10 +29,10 @@ const DashboardContent = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-          <p className="text-white/60 text-sm">Verificando autenticación...</p>
+          <div className="w-8 h-8 border-2 border-gray-200 border-t-[#c9f31d] rounded-full animate-spin"></div>
+          <p className="text-gray-600 text-sm">Verificando autenticación...</p>
         </div>
       </div>
     );
@@ -45,10 +44,10 @@ const DashboardContent = () => {
 
   if (maintenanceLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-          <p className="text-white/60 text-sm">Verificando estado del sistema...</p>
+          <div className="w-8 h-8 border-2 border-gray-200 border-t-[#c9f31d] rounded-full animate-spin"></div>
+          <p className="text-gray-600 text-sm">Verificando estado del sistema...</p>
         </div>
       </div>
     );
@@ -81,15 +80,15 @@ const DashboardContent = () => {
       case 'maintenance':
         return (
           <div className="text-center py-12">
-            <h2 className="text-xl font-semibold text-white mb-4">Modo Mantenimiento</h2>
-            <p className="text-gray-400">Gestión del modo mantenimiento en desarrollo...</p>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Modo Mantenimiento</h2>
+            <p className="text-gray-600">Gestión del modo mantenimiento en desarrollo...</p>
           </div>
         );
       case 'settings':
         return (
           <div className="text-center py-12">
-            <h2 className="text-xl font-semibold text-white mb-4">Configuración</h2>
-            <p className="text-gray-400">Panel de configuración en desarrollo...</p>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Configuración</h2>
+            <p className="text-gray-600">Panel de configuración en desarrollo...</p>
           </div>
         );
       default:

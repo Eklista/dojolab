@@ -1,6 +1,5 @@
-// components/MaintenanceMode.tsx
 import { motion } from "framer-motion";
-import type { MaintenanceModeData } from "../utils/maintenance";
+import type { MaintenanceModeData } from "../types";
 
 interface MaintenanceModeProps {
   data: MaintenanceModeData;
@@ -16,7 +15,7 @@ export const MaintenanceMode = ({ data }: MaintenanceModeProps) => {
   } = data;
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-white text-gray-900">
       <div className="max-w-7xl mx-auto h-screen flex items-center px-6">
         
         {/* Desktop Layout */}
@@ -36,20 +35,17 @@ export const MaintenanceMode = ({ data }: MaintenanceModeProps) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
             >
-              <img
-                src="/logo.png"
-                alt="The Dojo Lab Logo"
-                className="w-12 h-12 object-contain rounded-lg"
-              />
-              <span className="text-xl font-bold tracking-tight">
+              <div className="w-12 h-12 bg-[#c9f31d] rounded-2xl flex items-center justify-center shadow-card">
+                <span className="text-gray-900 font-bold text-lg text-heading">D</span>
+              </div>
+              <span className="text-xl font-bold tracking-tight text-heading">
                 THE DOJO LAB
               </span>
             </motion.div>
 
             {/* Título principal */}
             <motion.h1
-              className="text-5xl xl:text-6xl font-black uppercase leading-tight tracking-tight"
-              style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900 }}
+              className="text-5xl xl:text-6xl font-black uppercase leading-tight tracking-tight text-heading"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
@@ -65,51 +61,53 @@ export const MaintenanceMode = ({ data }: MaintenanceModeProps) => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <div className="space-y-8">
-              {/* Message */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.6 }}
-              >
-                <p className="text-lg text-gray-300 leading-relaxed">
-                  {message}
-                </p>
-              </motion.div>
-
-              {/* Status */}
-              <motion.div
-                className="border-l-4 border-white pl-6 py-2"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-              >
-                <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-2">
-                  Estado
-                </p>
-                <p className="text-xl font-bold text-white">
-                  {estimated_time}
-                </p>
-              </motion.div>
-
-              {/* Contact */}
-              {show_contact_email && contact_email && (
+            <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-card">
+              <div className="space-y-8">
+                {/* Message */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 0.6 }}
+                  transition={{ delay: 0.4, duration: 0.6 }}
                 >
-                  <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-2">
-                    Contacto de emergencia
+                  <p className="text-lg text-gray-700 leading-relaxed text-body">
+                    {message}
                   </p>
-                  <a
-                    href={`mailto:${contact_email}`}
-                    className="text-lg text-white hover:text-gray-300 transition-colors duration-200 border-b border-white/30 hover:border-white/60"
-                  >
-                    {contact_email}
-                  </a>
                 </motion.div>
-              )}
+
+                {/* Status */}
+                <motion.div
+                  className="border-l-4 border-[#c9f31d] pl-6 py-2"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                >
+                  <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-2 text-caption">
+                    Estado
+                  </p>
+                  <p className="text-xl font-bold text-gray-900 text-subheading">
+                    {estimated_time}
+                  </p>
+                </motion.div>
+
+                {/* Contact */}
+                {show_contact_email && contact_email && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.6 }}
+                  >
+                    <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-2 text-caption">
+                      Contacto de emergencia
+                    </p>
+                    <a
+                      href={`mailto:${contact_email}`}
+                      className="inline-flex items-center text-lg text-gray-900 hover:text-gray-700 transition-colors duration-200 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-full text-body font-medium"
+                    >
+                      {contact_email}
+                    </a>
+                  </motion.div>
+                )}
+              </div>
             </div>
           </motion.div>
         </div>
@@ -125,20 +123,17 @@ export const MaintenanceMode = ({ data }: MaintenanceModeProps) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
             >
-              <img
-                src="/logo.png"
-                alt="The Dojo Lab Logo"
-                className="w-16 h-16 object-contain rounded-lg mx-auto"
-              />
-              <p className="text-sm font-medium tracking-wider text-gray-400">
+              <div className="w-16 h-16 bg-[#c9f31d] rounded-2xl flex items-center justify-center shadow-card mx-auto">
+                <span className="text-gray-900 font-bold text-xl text-heading">D</span>
+              </div>
+              <p className="text-sm font-medium tracking-wider text-gray-600 text-caption">
                 THE DOJO LAB
               </p>
             </motion.div>
 
             {/* Title */}
             <motion.h1
-              className="text-3xl md:text-4xl font-black uppercase leading-tight tracking-tight"
-              style={{ fontFamily: 'Inter, sans-serif', fontWeight: 900 }}
+              className="text-3xl md:text-4xl font-black uppercase leading-tight tracking-tight text-heading"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
@@ -153,28 +148,28 @@ export const MaintenanceMode = ({ data }: MaintenanceModeProps) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
             >
-              <p className="text-base text-gray-300 leading-relaxed">
+              <p className="text-base text-gray-700 leading-relaxed text-body">
                 {message}
               </p>
 
-              <div className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-4">
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4 shadow-card">
                 <div>
-                  <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-1">
+                  <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-1 text-caption">
                     Estado
                   </p>
-                  <p className="text-lg font-bold text-white">
+                  <p className="text-lg font-bold text-gray-900 text-subheading">
                     {estimated_time}
                   </p>
                 </div>
 
                 {show_contact_email && contact_email && (
-                  <div className="border-t border-white/10 pt-4">
-                    <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-1">
+                  <div className="border-t border-gray-100 pt-4">
+                    <p className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-1 text-caption">
                       Contacto
                     </p>
                     <a
                       href={`mailto:${contact_email}`}
-                      className="text-sm text-white hover:text-gray-300 transition-colors duration-200 border-b border-white/30"
+                      className="inline-flex items-center text-sm text-gray-900 hover:text-gray-700 transition-colors duration-200 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-full text-body font-medium"
                     >
                       {contact_email}
                     </a>
@@ -194,9 +189,9 @@ export const MaintenanceMode = ({ data }: MaintenanceModeProps) => {
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 1, duration: 0.6 }}
       >
-        <div className="flex items-center space-x-2 text-xs uppercase tracking-wider font-medium text-gray-500">
+        <div className="flex items-center space-x-2 bg-white border border-gray-200 rounded-full px-4 py-2 shadow-card">
           <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-          <span>Maintenance Mode</span>
+          <span className="text-xs uppercase tracking-wider font-medium text-gray-600 text-caption">Maintenance Mode</span>
         </div>
       </motion.div>
 
@@ -207,9 +202,11 @@ export const MaintenanceMode = ({ data }: MaintenanceModeProps) => {
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 1.2, duration: 0.6 }}
       >
-        <p className="text-xs text-gray-600 uppercase tracking-wider">
-          Verificando cada 5 min
-        </p>
+        <div className="bg-white border border-gray-200 rounded-full px-4 py-2 shadow-card">
+          <p className="text-xs text-gray-500 uppercase tracking-wider text-caption">
+            Verificando cada 5 min
+          </p>
+        </div>
       </motion.div>
     </main>
   );
