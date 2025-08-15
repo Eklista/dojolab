@@ -1,6 +1,6 @@
-// hooks/useMaintenance.ts
 import { useState, useEffect, useCallback } from 'react';
-import { getMaintenanceMode, type MaintenanceModeData } from '../utils/maintenance';
+import { maintenanceService } from '../utils/maintenance';
+import type { MaintenanceModeData } from '../types';
 
 interface UseMaintenanceReturn {
   maintenanceData: MaintenanceModeData | null;
@@ -23,7 +23,7 @@ export const useMaintenance = (
       setError(null);
       if (forceRefresh) setLoading(true);
       
-      const data = await getMaintenanceMode(forceRefresh);
+      const data = await maintenanceService.getMaintenanceMode(forceRefresh);
       setMaintenanceData(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error loading maintenance mode');

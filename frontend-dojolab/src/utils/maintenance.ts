@@ -1,36 +1,13 @@
-// utils/maintenance.ts
-
-const DIRECTUS_URL = 'https://api.thedojolab.com';
-
-export interface MaintenanceModeData {
-  id: number;
-  status: string;
-  user_updated: string | null;
-  title: string;
-  message: string;
-  estimated_time: string;
-  contact_email: string;
-  is_active: boolean;
-  show_contact_email: boolean;
-}
-
-export interface DirectusMaintenanceResponse {
-  data: MaintenanceModeData;
-}
+import { getApiClient } from './api-client';
+import type { MaintenanceModeData } from '../types';
 
 class MaintenanceService {
-  private baseUrl: string;
   private cache: { data: MaintenanceModeData | null; timestamp: number } = {
     data: null,
     timestamp: 0
   };
   private cacheTimeout = 5 * 60 * 1000; // 5 minutos
 
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
-  }
-
-  // Obtener estado de mantenimiento con cache
   async getMaintenanceMode(forceRefresh = false): Promise<MaintenanceModeData> {
     const now = Date.now();
     
@@ -40,21 +17,16 @@ class MaintenanceService {
     }
 
     try {
-      const response = await fetch(`${this.baseUrl}/items/maintenance_mode`);
-      
-      if (!response.ok) {
-        throw new Error(`Error fetching maintenance mode: ${response.status}`);
-      }
-
-      const result: DirectusMaintenanceResponse = await response.json();
+      const apiClient = getApiClient();
+      const data = await apiClient.getMaintenanceMode();
       
       // Actualizar cache
       this.cache = {
-        data: result.data,
+        data,
         timestamp: now
       };
 
-      return result.data;
+      return data;
     } catch (error) {
       console.error('Error fetching maintenance mode:', error);
       
@@ -79,27 +51,25 @@ class MaintenanceService {
     }
   }
 
-  // Verificar solo si está activo (función rápida)
   async isMaintenanceActive(forceRefresh = false): Promise<boolean> {
     try {
       const data = await this.getMaintenanceMode(forceRefresh);
       return data.is_active;
     } catch (error) {
       console.error('Error checking maintenance status:', error);
-      return false; // Por defecto no mantenimiento
+      return false;
     }
   }
 
-  // Limpiar cache manualmente
   clearCache(): void {
     this.cache = { data: null, timestamp: 0 };
   }
 }
 
-// Instancia del servicio
-export const maintenanceService = new MaintenanceService(DIRECTUS_URL);
+// Singleton instance
+const maintenanceService = new MaintenanceService();
 
-// Funciones de conveniencia
+export { maintenanceService };
 export const getMaintenanceMode = (forceRefresh = false) => 
   maintenanceService.getMaintenanceMode(forceRefresh);
 

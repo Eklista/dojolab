@@ -1,203 +1,128 @@
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../../contexts/AuthContext";
 
-export const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+interface NavbarProps {
+  title: string;
+  onToggleSidebar?: () => void;
+}
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+export const Navbar = ({ title, onToggleSidebar }: NavbarProps) => {
+  const { user, logout } = useAuth();
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
-  const navItems = ["Servicios", "Trabajos", "Cotización"];
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
 
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="fixed top-0 left-0 right-0 z-50 px-3 sm:px-4 pt-4 sm:pt-6"
-    >
-      <motion.div
-        className={`mx-auto w-full max-w-[96%] lg:max-w-[95%] xl:max-w-[90%] transition-all duration-700 ease-out ${
-          scrolled 
-            ? "bg-black/40 backdrop-blur-xl border border-white/5 shadow-2xl shadow-black/50" 
-            : "bg-black/20 backdrop-blur-md border border-white/10"
-        } rounded-2xl lg:rounded-full`}
-        style={{
-          backgroundImage: scrolled 
-            ? 'linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(20,20,20,0.4) 100%)'
-            : 'linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(20,20,20,0.2) 100%)'
-        } as React.CSSProperties}
-      >
-        <div className="flex items-center justify-between px-6 sm:px-8 py-2 sm:py-3">
-          
-          {/* Logo Section */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1, duration: 0.6 }}
-            className="flex items-center space-x-3"
-          >
-            <motion.div
-              className="relative group"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-lime-500/20 to-lime-600/20 rounded-xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <img
-                src="/logo.png"
-                alt="The Dojo Lab"
-                className="relative w-8 h-8 object-contain rounded-lg border border-white/10"
-              />
-            </motion.div>
-            
-            {/* Brand Text - visible on larger screens */}
-            <motion.span 
-              className="hidden md:block text-brutal-subtitle text-white text-sm tracking-[0.1em]"
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-            >
-              THE DOJO LAB
-            </motion.span>
-          </motion.div>
+    <nav className="h-16 bg-black border-b border-white/10 flex items-center justify-between px-6">
+      {/* Left Section */}
+      <div className="flex items-center space-x-4">
+        {/* Sidebar Toggle */}
+        <button
+          onClick={onToggleSidebar}
+          className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors lg:hidden"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
 
-          {/* Desktop Navigation */}
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="hidden lg:flex items-center space-x-1"
+        {/* Title */}
+        <h1 className="text-white text-lg font-semibold">{title}</h1>
+      </div>
+
+      {/* Right Section */}
+      <div className="flex items-center space-x-4">
+        {/* Notifications */}
+        <button className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors relative">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          </svg>
+          {/* Notification dot */}
+          <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+        </button>
+
+        {/* User Menu */}
+        <div className="relative">
+          <button
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            className="flex items-center space-x-3 p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
           >
-            {navItems.map((item, index) => (
-              <motion.a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="relative px-6 py-3 text-gray-300 hover:text-white transition-all duration-300 text-brutal-subtitle text-xs group rounded-full"
+            <div className="text-right">
+              <p className="text-sm font-medium text-white">{user?.first_name} {user?.last_name}</p>
+              <p className="text-xs text-gray-400">{user?.email}</p>
+            </div>
+            <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+              {user?.avatar ? (
+                <img src={user.avatar} alt="Avatar" className="w-8 h-8 rounded-full" />
+              ) : (
+                <span className="text-white text-sm font-medium">
+                  {user?.first_name?.[0]}{user?.last_name?.[0]}
+                </span>
+              )}
+            </div>
+            <svg 
+              className={`w-4 h-4 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {/* User Dropdown */}
+          <AnimatePresence>
+            {showUserMenu && (
+              <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
-                whileHover={{ 
-                  y: -2,
-                  transition: { type: "spring", stiffness: 400, damping: 20 }
-                }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute right-0 mt-2 w-48 bg-gray-800 border border-white/10 rounded-lg shadow-xl z-50"
               >
-                <motion.span 
-                  className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300"
-                  whileHover={{ scale: 1.05 }}
-                />
-                <span className="relative z-10">{item}</span>
-                
-                <motion.span 
-                  className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-lime-400 group-hover:w-3/4 transition-all duration-300 rounded-full"
-                />
-              </motion.a>
-            ))}
-          </motion.div>
+                <div className="p-2">
+                  {/* Profile */}
+                  <button className="w-full flex items-center space-x-3 px-3 py-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors text-left">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span className="text-sm">Perfil</span>
+                  </button>
 
-          {/* Right Section */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="flex items-center space-x-3"
-          >
-            
-            {/* CTA Button */}
-            <motion.a
-              href="mailto:hola@thedojolab.com"
-              className="hidden sm:inline-flex items-center px-5 py-2 bg-lime-400 text-black text-brutal-subtitle text-xs hover:bg-white transition-all duration-300 shadow-lg group"
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "4px 4px 0px rgba(132, 204, 22, 0.3)"
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span>Contactar</span>
-              <motion.svg 
-                className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </motion.svg>
-            </motion.a>
+                  {/* Settings */}
+                  <button className="w-full flex items-center space-x-3 px-3 py-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors text-left">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span className="text-sm">Configuración</span>
+                  </button>
 
-            {/* Mobile Menu Button */}
-            <motion.button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 text-gray-400 hover:text-white transition-all duration-300 rounded-full hover:bg-white/10 backdrop-blur-sm border border-white/10"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <motion.svg 
-                className="w-5 h-5" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-                animate={{ rotate: isMenuOpen ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {isMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </motion.svg>
-            </motion.button>
-          </motion.div>
+                  <div className="border-t border-white/10 my-2"></div>
+
+                  {/* Logout */}
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full flex items-center space-x-3 px-3 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors text-left"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span className="text-sm">Cerrar Sesión</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-
-        {/* Mobile Menu */}
-        <motion.div
-          initial={false}
-          animate={{ 
-            height: isMenuOpen ? "auto" : 0,
-            opacity: isMenuOpen ? 1 : 0
-          }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="lg:hidden overflow-hidden border-t border-white/10"
-        >
-          <div className="px-6 py-4 space-y-1">
-            {navItems.map((item, index) => (
-              <motion.a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 transition-all duration-300 text-brutal-subtitle text-sm rounded-full"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ 
-                  opacity: isMenuOpen ? 1 : 0,
-                  x: isMenuOpen ? 0 : -20
-                }}
-                transition={{ delay: index * 0.1, duration: 0.3 }}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item}
-              </motion.a>
-            ))}
-            
-            <motion.a
-              href="mailto:hola@thedojolab.com"
-              className="block px-4 py-3 mt-4 bg-lime-400 text-black text-brutal-subtitle text-sm text-center border border-white/20"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ 
-                opacity: isMenuOpen ? 1 : 0,
-                y: isMenuOpen ? 0 : 20
-              }}
-              transition={{ delay: 0.4, duration: 0.3 }}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Contactar
-            </motion.a>
-          </div>
-        </motion.div>
-      </motion.div>
-    </motion.nav>
+      </div>
+    </nav>
   );
 };
