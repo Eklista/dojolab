@@ -1,11 +1,14 @@
 import { motion } from "framer-motion";
+import { config } from "../utils/config";
 import type { MaintenanceModeData } from "../types";
 
 interface MaintenanceModeProps {
   data: MaintenanceModeData;
+  userIP?: string;
+  isAllowedIP?: boolean;
 }
 
-export const MaintenanceMode = ({ data }: MaintenanceModeProps) => {
+export const MaintenanceMode = ({ data, userIP, isAllowedIP }: MaintenanceModeProps) => {
   const {
     title,
     message,
@@ -107,6 +110,35 @@ export const MaintenanceMode = ({ data }: MaintenanceModeProps) => {
                     </a>
                   </motion.div>
                 )}
+
+                {/* Debug Info - Solo en desarrollo */}
+                {config.isDevelopment && (userIP || isAllowedIP !== undefined) && (
+                  <motion.div
+                    className="border-t border-gray-100 pt-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7, duration: 0.6 }}
+                  >
+                    <p className="text-xs uppercase tracking-wider text-red-500 font-medium mb-3 text-caption">
+                      🔧 Debug Info (Solo Desarrollo)
+                    </p>
+                    <div className="bg-red-50 border border-red-200 rounded-2xl p-4 space-y-2">
+                      {userIP && (
+                        <p className="text-sm text-red-700 text-body">
+                          <span className="font-medium">Tu IP:</span> {userIP}
+                        </p>
+                      )}
+                      {isAllowedIP !== undefined && (
+                        <p className="text-sm text-red-700 text-body">
+                          <span className="font-medium">¿IP Permitida?:</span> {isAllowedIP ? '✅ Sí' : '❌ No'}
+                        </p>
+                      )}
+                      <p className="text-xs text-red-600 text-body">
+                        Este mensaje solo aparece en desarrollo
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             </div>
           </motion.div>
@@ -173,6 +205,27 @@ export const MaintenanceMode = ({ data }: MaintenanceModeProps) => {
                     >
                       {contact_email}
                     </a>
+                  </div>
+                )}
+
+                {/* Debug Info Mobile - Solo en desarrollo */}
+                {config.isDevelopment && (userIP || isAllowedIP !== undefined) && (
+                  <div className="border-t border-gray-100 pt-4">
+                    <p className="text-xs uppercase tracking-wider text-red-500 font-medium mb-2 text-caption">
+                      🔧 Debug Info
+                    </p>
+                    <div className="bg-red-50 border border-red-200 rounded-2xl p-3 space-y-1">
+                      {userIP && (
+                        <p className="text-xs text-red-700 text-body">
+                          <span className="font-medium">IP:</span> {userIP}
+                        </p>
+                      )}
+                      {isAllowedIP !== undefined && (
+                        <p className="text-xs text-red-700 text-body">
+                          <span className="font-medium">Permitida:</span> {isAllowedIP ? '✅' : '❌'}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

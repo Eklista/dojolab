@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { getApiClient } from "../../utils/api-client";
+import { 
+  getStatusText, 
+  getPlanTypeText, 
+  getBillingCycleText, 
+  getStatusVariant, 
+  getPlanTypeVariant 
+} from "../../utils/text-mappings";
 import type { Subscription } from "../../types";
 import { DataTable } from "../ui/DataTable";
 import { Modal } from "../ui/Modal";
@@ -58,20 +65,6 @@ export const SubscriptionsView = () => {
     setSelectedSubscription(null);
   };
 
-  const getStatusVariant = (status: string) => {
-    const variants = {
-      active: 'success' as const,
-      pending: 'warning' as const,
-      cancelled: 'error' as const,
-      expired: 'neutral' as const
-    };
-    return variants[status as keyof typeof variants] || 'neutral';
-  };
-
-  const getPlanTypeVariant = (planType: string) => {
-    return planType === 'paid' ? 'info' as const : 'neutral' as const;
-  };
-
   // Estadísticas
   const stats = [
     {
@@ -103,7 +96,7 @@ export const SubscriptionsView = () => {
     },
     {
       label: "Costo Total",
-      value: `${subscriptions.filter(s => s.status === 'active').reduce((acc, s) => acc + parseFloat(s.cost), 0).toFixed(2)}`,
+      value: `$${subscriptions.filter(s => s.status === 'active').reduce((acc, s) => acc + parseFloat(s.cost), 0).toFixed(2)}`,
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
@@ -130,7 +123,10 @@ export const SubscriptionsView = () => {
       label: 'Estado',
       accessor: 'status' as keyof Subscription,
       render: (value: string) => (
-        <StatusBadge status={value} variant={getStatusVariant(value)} />
+        <StatusBadge 
+          status={getStatusText(value)} 
+          variant={getStatusVariant(value)} 
+        />
       )
     },
     {
@@ -138,7 +134,10 @@ export const SubscriptionsView = () => {
       label: 'Plan',
       accessor: 'plan_type' as keyof Subscription,
       render: (value: string) => (
-        <StatusBadge status={value} variant={getPlanTypeVariant(value)} />
+        <StatusBadge 
+          status={getPlanTypeText(value)} 
+          variant={getPlanTypeVariant(value)} 
+        />
       )
     },
     {
@@ -146,7 +145,7 @@ export const SubscriptionsView = () => {
       label: 'Ciclo',
       accessor: 'billing_cycle' as keyof Subscription,
       render: (value: string) => (
-        <span className="text-gray-900 text-body">{value}</span>
+        <span className="text-gray-900 text-body">{getBillingCycleText(value)}</span>
       )
     },
     {
@@ -266,18 +265,18 @@ export const SubscriptionsView = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-gray-50 rounded-2xl">
                 <label className="text-gray-600 text-sm text-caption">Estado</label>
-                <p className="text-gray-900 text-body">{selectedSubscription.status}</p>
+                <p className="text-gray-900 text-body">{getStatusText(selectedSubscription.status)}</p>
               </div>
               <div className="p-4 bg-gray-50 rounded-2xl">
                 <label className="text-gray-600 text-sm text-caption">Tipo de Plan</label>
-                <p className="text-gray-900 text-body">{selectedSubscription.plan_type}</p>
+                <p className="text-gray-900 text-body">{getPlanTypeText(selectedSubscription.plan_type)}</p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-gray-50 rounded-2xl">
                 <label className="text-gray-600 text-sm text-caption">Ciclo de Facturación</label>
-                <p className="text-gray-900 text-body">{selectedSubscription.billing_cycle}</p>
+                <p className="text-gray-900 text-body">{getBillingCycleText(selectedSubscription.billing_cycle)}</p>
               </div>
               <div className="p-4 bg-gray-50 rounded-2xl">
                 <label className="text-gray-600 text-sm text-caption">Costo</label>

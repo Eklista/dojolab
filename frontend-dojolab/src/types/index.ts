@@ -1,3 +1,5 @@
+// src/types/index.ts
+
 // Base Directus interfaces
 export interface DirectusResponse<T> {
   data: T;
@@ -16,7 +18,7 @@ export interface DirectusFile {
   duration?: number;
 }
 
-// Maintenance Mode (ya existe en tu backend)
+// Maintenance Mode
 export interface MaintenanceModeData {
   id: number;
   status: string;
@@ -64,7 +66,7 @@ export interface DirectusUser {
     children?: any[];
     policies?: string[];
     users?: string[];
-  } | string; // Puede ser objeto expandido o solo UUID
+  } | string;
   status: string;
   last_access: string;
   last_page: string | null;
@@ -80,13 +82,13 @@ export interface AuthState {
 // Subscriptions
 export interface Subscription {
   id: number;
-  status: 'active' | 'pending' | 'cancelled' | 'expired';
+  status: 'active' | 'pending' | 'cancelled' | 'expired' | 'trialing';
   date_created: string;
   user_updated: string | null;
   date_updated: string | null;
   service_name: string;
   plan_type: 'free' | 'paid';
-  billing_cycle: 'monthly' | 'yearly' | 'none';
+  billing_cycle: 'monthly' | 'yearly' | 'one_time' | 'none';
   renewal_date: string;
   cost: string;
 }
@@ -105,4 +107,5 @@ export interface AppConfig {
   appName: string;
   appVersion: string;
   isDevelopment: boolean;
+  maintenanceAllowedIPs: string[];
 }
