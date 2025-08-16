@@ -55,7 +55,14 @@ export function usePWA(): PWAState & PWAActions {
     setIsInstalled(isPWAMode);
 
     if ('serviceWorker' in navigator) {
-      registerServiceWorker();
+      // Registrar el Service Worker después de que la página cargue completamente
+      if (document.readyState === 'complete') {
+        setTimeout(registerServiceWorker, 1000);
+      } else {
+        window.addEventListener('load', () => {
+          setTimeout(registerServiceWorker, 1000);
+        });
+      }
     }
 
     return () => {
@@ -72,29 +79,34 @@ export function usePWA(): PWAState & PWAActions {
         scope: '/'
       });
       
+      console.log('🔧 Service Worker registrado correctamente');
       setRegistration(reg);
 
       reg.addEventListener('updatefound', () => {
+        console.log('🔄 Nueva versión del Service Worker encontrada');
         const newWorker = reg.installing;
         if (newWorker) {
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('✅ Nueva versión instalada, actualización disponible');
               setHasUpdate(true);
             }
           });
         }
       });
 
+      // Solo recargar si el usuario acepta la actualización
       let refreshing = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
+        if (!refreshing && sessionStorage.getItem('sw-skip-waiting') === 'true') {
           refreshing = true;
+          sessionStorage.removeItem('sw-skip-waiting');
           window.location.reload();
         }
       });
 
     } catch (error) {
-      console.error('Error registrando Service Worker:', error);
+      console.error('❌ Error registrando Service Worker:', error);
     }
   };
 
@@ -124,6 +136,7 @@ export function usePWA(): PWAState & PWAActions {
 
   const skipWaiting = () => {
     if (registration && registration.waiting) {
+      sessionStorage.setItem('sw-skip-waiting', 'true');
       registration.waiting.postMessage({ type: 'SKIP_WAITING' });
       setHasUpdate(false);
     }

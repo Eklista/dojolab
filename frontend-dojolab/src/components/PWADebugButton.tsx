@@ -13,6 +13,9 @@ export const PWADebugButton = () => {
   };
 
   const handleDebugInfo = () => {
+    const swState = navigator.serviceWorker.controller ? 'Activo' : 'Inactivo';
+    const beforeInstallPrompt = (window as any).beforeInstallPromptEvent ? 'Disponible' : 'No disponible';
+    
     console.table({
       'Es Instalable': isInstallable,
       'Está Instalada': isInstalled,
@@ -20,7 +23,10 @@ export const PWADebugButton = () => {
       'Tiene Actualización': hasUpdate,
       'Banner Descartado': localStorage.getItem('pwa-install-dismissed') === 'true',
       'Display Mode': window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser',
-      'Navigator Standalone': (window.navigator as any).standalone || false
+      'Navigator Standalone': (window.navigator as any).standalone || false,
+      'Service Worker': swState,
+      'Install Prompt': beforeInstallPrompt,
+      'User Agent': navigator.userAgent.includes('Chrome') ? 'Chrome' : 'Otro'
     });
   };
 

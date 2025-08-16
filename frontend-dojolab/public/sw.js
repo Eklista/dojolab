@@ -17,125 +17,173 @@ const CACHE_STRATEGIES = {
 };
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then(cache => cache.addAll(STATIC_ASSETS))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(STATIC_CACHE);
+    await cache.addAll(STATIC_ASSETS);
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-      .then(cacheNames => {
-        return Promise.all(
-          cacheNames
-            .filter(cacheName => {
-              return cacheName.startsWith('dojolab-') && cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE;
-            })
-            .map(cacheName => caches.delete(cacheName))
-        );
-      })
-      .then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    const names = await caches.keys();
+    await Promise.all(
+      names
+        .filter(n => n.startsWith('dojolab-') && n !== STATIC_CACHE && n !== DYNAMIC_CACHE)
+        .map(n => caches.delete(n))
+    );
+    await self.clients.claim();
+  })());
 });
 
-self.addEventListener('fetch', event => {
-  const { request } = event;
+// --------- helpers ----------
+function shouldBypass(request) {
   const url = new URL(request.url);
 
-  if (request.method !== 'GET') return;
+  // Solo GET
+  if (request.method !== 'GET') return true;
 
-  if (url.origin === location.origin && url.pathname.startsWith('/icons/')) {
-    event.respondWith(cacheFirst(request));
-    return;
+  // Solo http/https
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return true;
+
+  // Evitar extensiones, data, blob, etc.
+  if (url.protocol.startsWith('chrome-extension')) return true;
+
+  // En localhost, no interceptar nada del dev server/Vite/HMR
+  const isLocal = (url.hostname === 'localhost' || url.hostname === '127.0.0.1');
+  if (isLocal) {
+    if (
+      url.pathname.startsWith('/@vite') ||
+      url.pathname.startsWith('/@react-refresh') ||
+      url.pathname.startsWith('/src/') ||
+      url.pathname.startsWith('/node_modules/') ||
+      url.pathname.includes('__vite') ||
+      url.pathname.endsWith('.map')
+    ) {
+      return true;
+    }
+    // Evitar websockets/event streams del HMR
+    const accept = request.headers.get('accept') || '';
+    if (accept.includes('text/event-stream')) return true;
   }
 
-  if (url.origin === location.origin) {
-    if (url.pathname === '/' || url.pathname.endsWith('.html')) {
-      event.respondWith(networkFirst(request));
-      return;
-    }
+  return false;
+}
 
-    if (url.pathname.includes('/api/')) {
-      event.respondWith(networkFirst(request));
-      return;
-    }
+async function safeResponseFallback() {
+  return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+}
 
-    if (url.pathname.endsWith('.js') || url.pathname.endsWith('.css')) {
-      event.respondWith(staleWhileRevalidate(request));
-      return;
-    }
-
-    event.respondWith(cacheFirst(request));
-    return;
-  }
-
-  if (url.hostname.includes('directus') || url.hostname.includes('api')) {
-    return;
-  }
-
-  event.respondWith(networkFirst(request));
-});
-
+// --------- estrategias ----------
 async function cacheFirst(request) {
   const cached = await caches.match(request);
-  if (cached) {
-    return cached;
-  }
+  if (cached) return cached;
 
   try {
     const response = await fetch(request);
-    if (response.ok) {
+    if (response && response.ok) {
       const cache = await caches.open(DYNAMIC_CACHE);
-      cache.put(request, response.clone());
+      await cache.put(request, response.clone());
     }
-    return response;
-  } catch (error) {
+    return response || await safeResponseFallback();
+  } catch {
     if (request.destination === 'document') {
-      return caches.match('/');
+      const home = await caches.match('/');
+      if (home) return home;
     }
-    throw error;
+    return safeResponseFallback();
   }
 }
 
 async function networkFirst(request) {
   try {
     const response = await fetch(request);
-    if (response.ok) {
+    if (response && response.ok) {
       const cache = await caches.open(DYNAMIC_CACHE);
-      cache.put(request, response.clone());
+      await cache.put(request, response.clone());
     }
-    return response;
-  } catch (error) {
+    return response || await safeResponseFallback();
+  } catch {
     const cached = await caches.match(request);
-    if (cached) {
-      return cached;
-    }
-    
+    if (cached) return cached;
+
     if (request.destination === 'document') {
-      const fallback = await caches.match('/');
-      if (fallback) return fallback;
+      const home = await caches.match('/');
+      if (home) return home;
     }
-    
-    throw error;
+    return safeResponseFallback();
   }
 }
 
 async function staleWhileRevalidate(request) {
-  const cached = await caches.match(request);
-  
-  const fetchPromise = fetch(request).then(response => {
-    if (response.ok) {
-      const cache = caches.open(DYNAMIC_CACHE);
-      cache.then(c => c.put(request, response.clone()));
-    }
-    return response;
-  }).catch(() => cached);
+  const cache = await caches.open(DYNAMIC_CACHE);
+  const cached = await cache.match(request);
 
-  return cached || fetchPromise;
+  // Lanza actualización en background, pero asegúrate de NO romper si falla
+  const update = (async () => {
+    try {
+      const response = await fetch(request);
+      if (response && response.ok) {
+        await cache.put(request, response.clone()); // <- CLON correcto
+      }
+      return response;
+    } catch {
+      return null; // importante: no lances error; deja que responda el cached
+    }
+  })();
+
+  // Siempre devolver Response válida
+  if (cached) return cached;
+
+  const netRes = await update;
+  return netRes || safeResponseFallback();
 }
 
+// --------- fetch handler ----------
+self.addEventListener('fetch', event => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // No interceptar si debemos dejar pasar
+  if (shouldBypass(request)) return;
+
+  // No tocar llamadas externas a tu API/Directus (deja que el navegador haga fetch normal)
+  if (url.hostname.includes('directus') || url.hostname.includes('api')) {
+    return; // sin respondWith -> comportamiento por defecto
+  }
+
+  // Rutas internas
+  if (url.origin === location.origin) {
+    // Íconos
+    if (url.pathname.startsWith('/icons/')) {
+      event.respondWith(cacheFirst(request));
+      return;
+    }
+
+    // HTML / navegación -> network first
+    const accept = request.headers.get('accept') || '';
+    const isHTML = accept.includes('text/html') || url.pathname === '/' || url.pathname.endsWith('.html');
+    if (isHTML) {
+      event.respondWith(networkFirst(request));
+      return;
+    }
+
+    // JS/CSS -> S-W-R (en producción)
+    if (url.pathname.endsWith('.js') || url.pathname.endsWith('.css')) {
+      event.respondWith(staleWhileRevalidate(request));
+      return;
+    }
+
+    // Por defecto interno -> cache first
+    event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  // Externos (CDN, etc.) -> network first (o ajusta a tu gusto)
+  event.respondWith(networkFirst(request));
+});
+
+// --------- otros eventos ----------
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
@@ -144,47 +192,28 @@ self.addEventListener('message', event => {
 
 self.addEventListener('sync', event => {
   if (event.tag === 'background-sync') {
-    event.waitUntil(
-      // Lógica para sincronización en segundo plano
-      Promise.resolve()
-    );
+    event.waitUntil(Promise.resolve());
   }
 });
 
 self.addEventListener('push', event => {
   if (!event.data) return;
-
   const options = {
     body: event.data.text(),
     icon: '/icons/icon-192x192.png',
     badge: '/icons/icon-96x96.png',
     vibrate: [100, 50, 100],
-    data: {
-      dateOfArrival: Date.now(),
-      primaryKey: 1
-    },
+    data: { dateOfArrival: Date.now(), primaryKey: 1 },
     actions: [
-      {
-        action: 'explore',
-        title: 'Ver detalles',
-        icon: '/icons/icon-192x192.png'
-      },
-      {
-        action: 'close',
-        title: 'Cerrar',
-        icon: '/icons/icon-192x192.png'
-      }
+      { action: 'explore', title: 'Ver detalles', icon: '/icons/icon-192x192.png' },
+      { action: 'close', title: 'Cerrar', icon: '/icons/icon-192x192.png' }
     ]
   };
-
-  event.waitUntil(
-    self.registration.showNotification('The Dojo Lab', options)
-  );
+  event.waitUntil(self.registration.showNotification('The Dojo Lab', options));
 });
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-
   if (event.action === 'explore') {
     event.waitUntil(clients.openWindow('/'));
   }
