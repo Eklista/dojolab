@@ -4,6 +4,7 @@ import { Login } from "./components/Login";
 import { Layout } from "./components/layout/Layout";
 import { DashboardView } from "./components/views/DashboardView";
 import { SubscriptionsView } from "./components/views/SubscriptionsView";
+import { PWABanner } from "./components/PWABanner";
 import { useMaintenance } from "./hooks/useMaintenance";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { createApiClient } from "./utils/api-client";
@@ -37,10 +38,8 @@ const DashboardContent = () => {
     }
   }, [shouldShowMaintenance, isAuthenticated, user, isAllowedIP, userIP]);
 
-  // Debug en desarrollo
   useEffect(() => {
     if (config.isDevelopment) {
-      // Hacer debug info disponible globalmente
       (window as any).maintenanceDebug = debugInfo;
       console.log('🔧 Para debug de mantenimiento, ejecuta: window.maintenanceDebug()');
     }
@@ -58,7 +57,6 @@ const DashboardContent = () => {
   }
 
   if (!isAuthenticated) {
-    // Si no está autenticado, verificar mantenimiento para usuarios no logueados
     if (maintenanceLoading) {
       return (
         <div className="min-h-screen bg-white flex items-center justify-center">
@@ -74,7 +72,12 @@ const DashboardContent = () => {
       return <MaintenanceMode data={maintenanceData} />;
     }
 
-    return <Login />;
+    return (
+      <>
+        <PWABanner />
+        <Login />
+      </>
+    );
   }
 
   if (maintenanceLoading) {
@@ -92,7 +95,6 @@ const DashboardContent = () => {
     console.warn('⚠️ Error verificando mantenimiento:', maintenanceError);
   }
 
-  // Mostrar mantenimiento para usuarios autenticados si no están en la lista permitida
   if (shouldShowMaintenance && maintenanceData) {
     return <MaintenanceMode data={maintenanceData} userIP={userIP} isAllowedIP={isAllowedIP} />;
   }
@@ -147,13 +149,16 @@ const DashboardContent = () => {
   };
 
   return (
-    <Layout
-      activeView={activeView}
-      onViewChange={setActiveView}
-      title={getPageTitle()}
-    >
-      {renderActiveView()}
-    </Layout>
+    <>
+      <PWABanner />
+      <Layout
+        activeView={activeView}
+        onViewChange={setActiveView}
+        title={getPageTitle()}
+      >
+        {renderActiveView()}
+      </Layout>
+    </>
   );
 };
 
