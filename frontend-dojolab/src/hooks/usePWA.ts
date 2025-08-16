@@ -28,12 +28,15 @@ export function usePWA(): PWAState & PWAActions {
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
+      console.log('💾 PWA instalable detectada');
       setInstallPrompt(e as BeforeInstallPromptEvent);
     };
 
     const handleAppInstalled = () => {
+      console.log('✅ PWA instalada correctamente');
       setIsInstalled(true);
       setInstallPrompt(null);
+      localStorage.removeItem('pwa-install-dismissed');
     };
 
     const handleOnline = () => setIsOnline(true);
@@ -44,7 +47,12 @@ export function usePWA(): PWAState & PWAActions {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    setIsInstalled(window.matchMedia('(display-mode: standalone)').matches);
+    // Detectar si ya está instalada
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    const isFullscreen = window.matchMedia('(display-mode: fullscreen)').matches;
+    const isPWAMode = isStandalone || isFullscreen || (window.navigator as any).standalone === true;
+    
+    setIsInstalled(isPWAMode);
 
     if ('serviceWorker' in navigator) {
       registerServiceWorker();

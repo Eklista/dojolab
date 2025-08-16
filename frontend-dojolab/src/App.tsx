@@ -5,6 +5,7 @@ import { Layout } from "./components/layout/Layout";
 import { DashboardView } from "./components/views/DashboardView";
 import { SubscriptionsView } from "./components/views/SubscriptionsView";
 import { PWABanner } from "./components/PWABanner";
+import { PWADebugButton } from "./components/PWADebugButton";
 import { useMaintenance } from "./hooks/useMaintenance";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { createApiClient } from "./utils/api-client";
@@ -151,6 +152,7 @@ const DashboardContent = () => {
   return (
     <>
       <PWABanner />
+      <PWADebugButton />
       <Layout
         activeView={activeView}
         onViewChange={setActiveView}
